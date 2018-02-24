@@ -1,0 +1,31 @@
+{
+  "name": "blogilistafullstack",
+  "version": "1.0.0",
+  "description": "FullStack osa4 tehtäv�ät",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jheiska/blogilistaFullStack.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jheiska/blogilistaFullStack/issues"
+  },
+  "homepage": "https://github.com/jheiska/blogilistaFullStack#readme",
+  "devDependencies": {
+    "nodemon": "^1.15.1"
+  },
+  "dependencies": {
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.0",
+    "eslint": "^4.18.1",
+    "express": "^4.16.2",
+    "mongoose": "^5.0.7"
+  }
+}
