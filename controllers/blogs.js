@@ -7,6 +7,7 @@ blogsRouter.get('/', async (request, response) => {
 })
   
 blogsRouter.post('/', async (request, response) => {
+  try {
   let { title,author,url,likes } = await request.body
   
   if ( title === undefined || url === undefined ) {
@@ -26,14 +27,21 @@ blogsRouter.post('/', async (request, response) => {
 
   blog.save()
   response.status(201).json(blog)
+  } catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'something went wrong...' })
+  }
 })
 
-blogsRouter.delete('/:id', (request, response) => {
-  Blog  
-    .findByIdAndRemove(request.params.id)
-      .then( () => {
-      response.status(204).end()
-    })
+blogsRouter.delete('/:id', async(request, response) => {
+  try {
+    await Blog.findByIdAndRemove(request.params.id)
+
+    response.status(204).end()
+  } catch (exception) {
+    console.log(exception)
+    response.status(400).send({ error: 'malformatted id' })
+  }
 })
 
 module.exports = blogsRouter
