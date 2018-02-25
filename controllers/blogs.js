@@ -7,8 +7,12 @@ blogsRouter.get('/', async (request, response) => {
 })
   
 blogsRouter.post('/', async (request, response) => {
-  const { title,author,url,likes } = await request.body
+  let { title,author,url,likes } = await request.body
   
+  if (likes === undefined) {
+    likes = 0
+  }
+
   const blog = new Blog ({
     title,
     author,

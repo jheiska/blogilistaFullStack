@@ -123,6 +123,25 @@ test('POST functions correctly', async () => {
     expect(titles).toContain('BlogTest')
 })
 
+test('POSTing without likes sets likes to 0', async () => {
+  const newBlog = {
+    "title": "BlogTest",
+    "author": "String",
+    "url": "String"
+  }
+  
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+
+  const response = await api
+    .get('/api/blogs')
+
+  const bloglist = response.body
+  const addedBlog = bloglist[bloglist.length-1]
+  expect(addedBlog.likes).toBe(0)
+})
+
 afterAll(() => {
   server.close()
 })
