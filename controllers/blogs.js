@@ -9,6 +9,10 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   let { title,author,url,likes } = await request.body
   
+  if ( title === undefined || url === undefined ) {
+    return response.status(400).json({error: 'title or url missing'})
+  }
+
   if (likes === undefined) {
     likes = 0
   }

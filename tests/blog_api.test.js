@@ -103,14 +103,16 @@ test('a specific blog is within the returned blogs', async () => {
 })
 
 test('POST functions correctly', async () => {
+  const newBlog = {
+    "title": "BlogTest",
+    "author": "String",
+    "url": "String",
+    "likes": 2
+  }
+  
   await api
     .post('/api/blogs')
-    .send({
-      "title": "BlogTest",
-      "author": "String",
-      "url": "String",
-      "likes": 2
-    })
+    .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -140,6 +142,32 @@ test('POSTing without likes sets likes to 0', async () => {
   const bloglist = response.body
   const addedBlog = bloglist[bloglist.length-1]
   expect(addedBlog.likes).toBe(0)
+})
+
+test('POSTing without title returns 400 Bad request', async () => {
+  const newBlog = {
+    "author": "String",
+    "url": "String",
+    "likes": 2
+  }
+  
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(400)
+})
+
+test('POSTing without url returns 400 Bad request', async () => {
+  const newBlog = {
+    "title": "TestBlog",
+    "author": "String",
+    "likes": 2
+  }
+  
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(400)
 })
 
 afterAll(() => {
