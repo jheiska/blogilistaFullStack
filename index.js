@@ -7,12 +7,6 @@ const mongoose = require('mongoose')
 const blogsRouter = require('./controllers/blogs')
 const config = require('./utils/config')
 
-/*
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config()
-  }
-*/
-
 mongoose
   .connect(config.mongoUrl)
   .then( () => {
@@ -22,15 +16,9 @@ mongoose
     console.log(err)
   })
 
-/*
-const url = process.env.MONGODB_URI
-mongoose.connect(url)
-*/
-
 app.use(cors())
 app.use(bodyParser.json())
 app.use(express.static('build'))
-
 
 app.use('/api/blogs', blogsRouter)
 

@@ -2,6 +2,7 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const http = require('http')
 
 const initialBlogs = [
   {
@@ -101,7 +102,26 @@ test('a specific blog is within the returned blogs', async () => {
   expect(titles).toContain('TDD harms architecture')
 })
 
+test('POST functions correctly', async () => {
+  await api
+    .post('/api/blogs')
+    .send({
+      "title": "BlogTest",
+      "author": "String",
+      "url": "String",
+      "likes": 2
+    })
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
 
+    const response = await api
+      .get('/api/blogs')
+
+    const titles = response.body.map(r => r.title)
+
+    expect(response.body.length).toBe(initialBlogs.length + 1)
+    expect(titles).toContain('BlogTest')
+})
 
 afterAll(() => {
   server.close()
