@@ -1,32 +1,42 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
-  response.json(blogs.map(Blog.format))
+  const blogs = await Blog
+    .find({})
+    .populate('user', { username: 1, name: 1 })
+    response.json(blogs.map(Blog.format))
 })
   
 blogsRouter.post('/', async (request, response) => {
   try {
-  let { title,author,url,likes } = await request.body
+  let body = await request.body
   
-  if ( title === undefined || url === undefined ) {
+  if ( body.title === undefined || body.url === undefined ) {
     return response.status(400).json({error: 'title or url missing'})
   }
 
-  if (likes === undefined) {
-    likes = 0
+  if (body.likes === undefined) {
+    body.likes = 0
   }
 
+  const user = await User.findById(body.user)
+
   const blog = new Blog ({
-    title,
-    author,
-    url,
-    likes   
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+    user: user._id  
   })
 
-  blog.save()
-  response.status(201).json(blog)
+  const savedBlog = await blog.save()
+
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
+
+  response.status(201).json(Blog.format(savedBlog))
   } catch (exception) {
     console.log(exception)
     response.status(500).json({ error: 'something went wrong...' })
@@ -56,8 +66,8 @@ blogsRouter.put('/:id', async (request, response) => {
         likes: body.likes
     }
     
-    await Blog.findByIdAndUpdate(request.params.id, blog, { new: true } )
-    response.json(blog)
+    const updatedUser = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true } )
+    response.json(Blog.format(updatedUser))
 
   } catch (exception) {
     console.log(exception)
@@ -65,24 +75,5 @@ blogsRouter.put('/:id', async (request, response) => {
   }
 
 })
-
-/*
-blogsRouter.put('/:id', (request, response) => {
-  const body = request.body
-  
-  const blog = {
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes
-  }
-
-  Blog
-    .findByIdAndUpdate(request.params.id, blog, { new: true })
-    .then(result => {
-      response.json(result)
-    })
-})
-*/
 
 module.exports = blogsRouter
